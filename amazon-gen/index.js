@@ -6,7 +6,7 @@ if (args.includes('--setup')) {
 } else if (args.includes('--gen')) {
   const concurrency = (() => {
     const i = args.indexOf('--concurrency');
-    return i !== -1 ? parseInt(args[i + 1]) : config.concurrency;
+    return i !== -1 ? (parseInt(args[i + 1]) || config.concurrency) : config.concurrency;
   })();
   require('./gen-runner').run(concurrency);
 } else {
