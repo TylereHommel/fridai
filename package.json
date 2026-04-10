@@ -13,5 +13,10 @@
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "imap": "^0.8.19",
+    "mailparser": "^3.9.8",
+    "playwright": "^1.59.1"
   }
 }
