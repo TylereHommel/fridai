@@ -18,7 +18,7 @@ function waitForOtp(toAddress, timeoutMs = 120000) {
       host: config.imap.host,
       port: 993,
       tls: true,
-      tlsOptions: { rejectUnauthorized: false },
+      tlsOptions: { rejectUnauthorized: true },
     });
 
     function poll() {
@@ -41,14 +41,16 @@ function waitForOtp(toAddress, timeoutMs = 120000) {
             return;
           }
 
-          const fetch = imap.fetch(uids, { bodies: '' });
+          let resolved = false;
+          const fetch = imap.fetch(uids, { bodies: '', markSeen: true });
           fetch.on('message', msg => {
             msg.on('body', stream => {
               simpleParser(stream, (err, parsed) => {
-                if (err) return;
+                if (err || resolved) return;
                 const text = parsed.text || parsed.html || '';
                 const otp = extractOtp(text);
                 if (otp) {
+                  resolved = true;
                   imap.end();
                   resolve(otp);
                 }

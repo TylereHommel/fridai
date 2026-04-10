@@ -1,9 +1,9 @@
 const https = require('https');
 const config = require('./config');
 
-function request(path) {
+function request(endpoint) {
   return new Promise((resolve, reject) => {
-    https.get(`https://api.smspool.net${path}&key=${config.smsPoolKey}`, res => {
+    https.get(`https://api.smspool.net${endpoint}&key=${config.smsPoolKey}`, res => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {

@@ -14,6 +14,10 @@ function save(pool) {
 
 function add(entry) {
   const pool = load();
+  if (pool.find(e => e.gvNumber === entry.gvNumber)) {
+    console.warn(`[gv-pool] Skipping duplicate GV number: ${entry.gvNumber}`);
+    return;
+  }
   pool.push({ ...entry, available: true });
   save(pool);
 }

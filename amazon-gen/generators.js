@@ -1,11 +1,10 @@
-const crypto = require('crypto');
 const config = require('./config');
 
 const FIRST_NAMES = [
   'James','John','Robert','Michael','William','David','Richard','Joseph','Thomas','Charles',
   'Mary','Patricia','Jennifer','Linda','Barbara','Elizabeth','Susan','Jessica','Sarah','Karen',
   'Christopher','Daniel','Paul','Mark','Donald','George','Kenneth','Steven','Edward','Brian',
-  'Dorothy','Lisa','Nancy','Betty','Margaret','Sandra','Ashley','Dorothy','Kimberly','Emily',
+  'Dorothy','Lisa','Nancy','Betty','Margaret','Sandra','Ashley','Carol','Kimberly','Emily',
   'Jason','Ryan','Gary','Nicholas','Eric','Jonathan','Stephen','Larry','Justin','Scott',
   'Amanda','Melissa','Deborah','Stephanie','Rebecca','Sharon','Laura','Cynthia','Kathleen','Amy',
   'Brandon','Benjamin','Samuel','Raymond','Gregory','Frank','Alexander','Patrick','Jack','Dennis'
