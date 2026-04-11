@@ -21,6 +21,10 @@ async function runWorker(profile) {
     };
   }
 
+  // Use realistic user agent
+  contextOptions.userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
+  contextOptions.viewport = { width: 1280, height: 800 };
+
   const browser = await chromium.launch(launchOptions);
   const context = await browser.newContext(contextOptions);
   const page = await context.newPage();
@@ -28,9 +32,19 @@ async function runWorker(profile) {
   let twoFaKey = '';
 
   try {
-    // Step 1: Navigate to Amazon signup
-    await page.goto('https://www.amazon.com/ap/register', { waitUntil: 'domcontentloaded' });
+    // Step 1: Navigate via homepage → sign in → create account link
+    await page.goto('https://www.amazon.com', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(2000);
+
+    // Go to sign-in page then navigate to create account
+    await page.goto('https://www.amazon.com/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.amazon.com%2F&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=usflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1500);
+
+    // Click "Create your Amazon account"
+    await page.click('a:has-text("Create your Amazon account")').catch(async () => {
+      await page.goto('https://www.amazon.com/ap/register?openid.assoc_handle=usflex&openid.mode=checkid_setup&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0', { waitUntil: 'domcontentloaded' });
+    });
+    await page.waitForTimeout(2000);
 
     await page.fill('input[name="customerName"]', email.split('@')[0]);
     await page.fill('input[name="email"]', email);
