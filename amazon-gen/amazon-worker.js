@@ -46,6 +46,8 @@ async function runWorker(profile) {
     });
     await page.waitForTimeout(2000);
 
+    // Wait for registration form fields to be present
+    await page.waitForSelector('input[name="customerName"]', { timeout: 15000 });
     await page.fill('input[name="customerName"]', email.split('@')[0]);
     await page.fill('input[name="email"]', email);
     await page.fill('input[name="password"]', password);
