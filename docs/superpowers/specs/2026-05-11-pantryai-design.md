@@ -212,9 +212,40 @@ lastServedAt: timestamp
 
 ---
 
-## 6. Recipe Detail
+## 6. Recipe Images
+
+Every recipe in the app has a hero food photograph. Images are generated once per unique recipe and reused from the archive — never regenerated for the same dish.
+
+### Generation Pipeline
+
+1. **Archive hit** — if a matching recipe already exists in `recipeArchive`, its `imageUrl` is used directly (no generation cost)
+2. **New recipe** — after Claude generates the recipe text, a Cloud Function triggers image generation asynchronously via **Replicate API** (Flux Schnell or SDXL food photography LoRA). Prompt format: `"[dish name], professional food photography, natural lighting, shallow depth of field, rustic table setting, appetizing plating, ultra-realistic"`
+3. **Image stored** — uploaded to Firebase Storage at `recipeImages/{recipeId}.jpg`. `imageUrl` written to `recipeArchive` entry.
+4. **Video imports** — for imported recipes, attempt to extract the OG image / video thumbnail from the source URL first. Fall back to generation if no usable image found.
+
+### Loading States
+
+While image is generating (typically 3–8 seconds), recipe cards show a shimmer placeholder. Recipe detail screen shows a blurred low-res placeholder that crossfades to the full image on load. `imageStatus: 'pending' | 'ready' | 'failed'` field on `recipeArchive` drives this.
+
+### Data Model Addition (`recipeArchive`)
+```
+imageUrl: string | null       // Firebase Storage URL
+imageStatus: 'pending' | 'ready' | 'failed'
+```
+
+### Cost
+Replicate Flux Schnell: ~$0.003/image. One generation per unique recipe title. Given recipe archive caching, most users trigger no more than 3–5 new generations per session. Marginal cost well within the $3.99/month subscription margin.
+
+### Recipe Cards (Recipes Tab)
+All recipe cards display the hero image as a full-bleed background with a bottom gradient overlay for text legibility. Cards are tall-format (roughly 3:4 ratio) — scannable at a glance, visually rich, no cluttered text walls.
+
+---
+
+## 7. Recipe Detail
 
 Each recipe displays:
+
+**Hero image:** full-width food photo (generated or imported thumbnail) at top of screen with parallax scroll effect. Tapping opens full-screen lightbox.
 
 **Header:** title, prep time, cook time, servings, dietary tags, "Keeps X days" note
 
@@ -242,7 +273,7 @@ Each recipe displays:
 
 ---
 
-## 7. Recipes Tab — Filter, Sort & Layout
+## 8. Recipes Tab — Filter, Sort & Layout
 
 ### Filter Bar
 Persistent chip bar at the top of the Recipes tab. Filters apply across all three sections (Last Session, Saved, Trending).
@@ -271,7 +302,7 @@ Accessible via a sort icon (top-right of each section). Options per section:
 
 ---
 
-## 8. Video Recipe Import (Share Extension)
+## 9. Video Recipe Import (Share Extension)
 
 Users can share any recipe video from TikTok, Instagram Reels, YouTube Shorts, or any website directly to PantryAI via the native iOS share sheet.
 
@@ -302,7 +333,7 @@ iOS Share Extensions in Expo managed workflow require a custom native config plu
 
 ---
 
-## 9. "Cooked It" Flow
+## 10. "Cooked It" Flow
 
 1. User taps "Mark as Cooked"
 2. Confirmation screen shows ingredient deductions with quantities. User can adjust amounts before confirming.
@@ -312,7 +343,7 @@ iOS Share Extensions in Expo managed workflow require a custom native config plu
 
 ---
 
-## 8. Smart Pantry Auto-Removal
+## 11. Smart Pantry Auto-Removal
 
 Four removal triggers — no manual cleanup required from the user:
 
@@ -325,7 +356,7 @@ Four removal triggers — no manual cleanup required from the user:
 
 ---
 
-## 9. Expiry Notifications — Two-Layer System
+## 12. Expiry Notifications — Two-Layer System
 
 **Layer 1 — Local notifications (scheduled at item creation):**
 When an expiry date is set, two local notifications are immediately scheduled via `expo-notifications`:
