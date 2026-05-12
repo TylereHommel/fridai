@@ -123,7 +123,7 @@ dietaryTags: string[]
 sourceIngredients: string[]
 rating: number | null           // 1–5, set when user taps Cooked It
 savedAt: timestamp
-isPublic: boolean               // true = eligible for community trending
+isPublic: boolean               // reserved for future explicit sharing; community pool driven by recipeArchive
 substitutionNote: string | null
 ```
 
@@ -150,20 +150,25 @@ days: {
 }
 ```
 
-### `communityRecipes/{recipeId}` (public collection)
+### `recipeArchive/{recipeId}` (global, replaces communityRecipes)
+The recipe archive serves two purposes: (1) cache to reduce Claude API calls, (2) community recipe pool for trending. Every Claude-generated recipe is written here. Before generating recipes, the Cloud Function queries this collection first.
+
 ```
 title: string
 ingredients: { name: string, amount: string }[]
+ingredientKeys: string[]        // normalized lowercase sorted array — used for lookup queries
 steps: { instruction: string, tip: string | null }[]
 macros: { calories: number, protein: number, carbs: number, fat: number, fiber: number }
 prepTime: number
 cookTime: number
 servings: number
-dietaryTags: string[]
-rating: number                  // average
+dietaryTags: string[]           // used to filter by user dietary restrictions
+substitutionNote: string | null
+usageCount: number              // incremented each time served to any user
+averageRating: number | null    // rolling average across all user ratings
 ratingCount: number
-saveCount: number
 createdAt: timestamp
+lastServedAt: timestamp
 ```
 
 ---
@@ -186,7 +191,20 @@ createdAt: timestamp
    - Green ✦: new item not previously tracked
    - Tap chip to remove (false positive). `+ Add` chip to add missing items manually.
 
-6. **Recipe generation (Cloud Function)** — on "Find Recipes" tap, confirmed ingredient list + `dietaryRestrictions` + `cuisinePreferences` sent to Claude sonnet. Prompt specifies: return 3–5 recipes as structured JSON, ranked by ingredient match percentage, each including full step-by-step instructions with inline tips, macros per serving, prep/cook time, dietary tags, and a substitution note. Claude instructed to include 2–4 general best-practice cooking tips per recipe (e.g., resting meat, lid for even cooking, tasting as you go).
+6. **Recipe generation (Cloud Function)** — on "Find Recipes" tap:
+
+   **Step 6a — Archive lookup (before Claude):**
+   Normalize the confirmed ingredient list (lowercase, sorted). Query `recipeArchive` for recipes where:
+   - All recipe `ingredientKeys` are present in the user's ingredient list (user has every required ingredient)
+   - `dietaryTags` are compatible with user's `dietaryRestrictions`
+   
+   Return top matches ranked by `averageRating` then `usageCount`. Increment `usageCount` and `lastServedAt` on each served recipe.
+
+   **Step 6b — Claude fallback (cache miss):**
+   If fewer than 3 archive matches are found, call Claude sonnet for the remaining recipes needed. Prompt specifies: return recipes as structured JSON, ranked by ingredient match percentage, each including full step-by-step instructions with inline tips, macros per serving, prep/cook time, dietary tags, and a substitution note. Claude instructed to include 2–4 general best-practice cooking tips per recipe (e.g., resting meat, lid for even cooking, tasting as you go).
+
+   **Step 6c — Archive write:**
+   Every Claude-generated recipe is immediately written to `recipeArchive` with `usageCount: 1`. Before writing, check for an existing recipe with the same title to avoid near-duplicates. Over time, the archive grows and Claude is called only for truly novel ingredient combinations.
 
 7. **Results displayed** — recipe cards shown with match bar, macro pills (calories, protein, carbs, fat), and three action buttons: Save, View Recipe, Cooked It.
 
@@ -310,18 +328,18 @@ Accessible via the Planner tab.
 
 ## 13. Community Trending Recipes
 
-Surfaces in the Recipes tab under a "Trending This Week" section.
+Surfaces in the Recipes tab under a "Trending This Week" section. Powered by the `recipeArchive` collection — no separate community collection needed.
 
 **How it works:**
-- When a user saves a recipe and opts in (`isPublic: true`), a sanitized copy is written to the `communityRecipes` collection
-- Trending = recipes that received the most saves + ratings within the last 7 days (activity-based, not creation date)
-- Filtered by the current user's dietary restrictions automatically
+- Every recipe served from the archive accumulates `usageCount` and `averageRating` automatically — no explicit opt-in required from users
+- Trending = recipes with the highest `usageCount` + `averageRating` activity in the last 7 days (`lastServedAt` within window), filtered by user's dietary restrictions
+- As the archive grows, trending becomes a genuine signal of what's popular and well-rated across the entire user base
 
 **On a community recipe:**
 - Same recipe detail view as personal recipes
-- Save to personal collection
-- "Cooked It" + rating
-- No attribution to original user (privacy)
+- Save to personal `savedRecipes` collection
+- "Cooked It" + rating (rating averaged back into archive `averageRating`)
+- No attribution to any user (fully anonymous)
 
 ---
 
@@ -435,5 +453,5 @@ Live preview shown when browsing presets.
 - **Barcode always available.** Barcode scan accessible from Pantry tab and from the ingredient review screen.
 - **Stale cleanup is gentle.** 60-day prompt + 7-day grace before any auto-removal. User always in control.
 - **Rating is optional.** Prompted after "Cooked It" but fully dismissable. No forced feedback.
-- **Community recipes are opt-in.** Recipes only surface publicly when user explicitly saves with `isPublic: true`.
+- **Recipe archive is automatic.** Every Claude-generated recipe is archived globally. No user opt-in needed — the archive grows passively and reduces API costs over time.
 - **Notification permission deferred.** Requested after first pantry item added, not on first launch.
