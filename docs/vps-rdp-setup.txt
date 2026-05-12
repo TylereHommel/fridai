@@ -1,0 +1,100 @@
+VPS RDP INDEFINITE CONNECTION SETUP
+=====================================
+Goal: Keep RDP session alive indefinitely, prevent lockouts on disconnect.
+
+
+STEP 1 — SESSION TIMEOUTS (gpedit.msc)
+---------------------------------------
+Path: Computer Configuration > Administrative Templates > Windows Components
+      > Remote Desktop Services > Remote Desktop Session Host > Session Time Limits
+
+Set these 3 policies to Enabled, limit = Never:
+  - Set time limit for active but idle Remote Desktop Services sessions
+  - Set time limit for disconnected sessions
+  - Set time limit for active Remote Desktop Services sessions
+
+
+STEP 2 — TCP KEEP-ALIVE (regedit)
+-----------------------------------
+Path: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server
+
+Create two DWORD (32-bit) values if they don't exist:
+  - KeepAliveEnable  = 1
+  - KeepAliveInterval = 1
+
+Verify via CMD:
+  reg query "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v KeepAliveEnable
+  reg query "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v KeepAliveInterval
+Both should return 0x1.
+
+
+STEP 3 — DISABLE ACCOUNT LOCKOUT (secpol.msc)
+-----------------------------------------------
+Path: Account Policies > Account Lockout Policy
+
+  - Account lockout threshold = 0 (never locks out)
+
+
+STEP 4 — DISABLE LOCK SCREEN (gpedit.msc)
+-------------------------------------------
+Path: Computer Configuration > Administrative Templates > Control Panel > Personalization
+
+  - "Do not display the lock screen" = Enabled
+
+Path: Computer Configuration > Windows Settings > Security Settings
+      > Local Policies > Security Options
+
+  - "Interactive logon: Machine inactivity limit" = 0
+
+
+STEP 5 — DISABLE SCREENSAVER
+------------------------------
+Option A (if Windows is activated):
+  Right-click desktop > Personalize > Lock screen > Screen saver settings
+  Set to None, uncheck "On resume, display logon screen"
+
+Option B (if Windows not activated — use Run dialog):
+  Win + R > control desk.cpl,,@screensaver
+  Set to None, uncheck "On resume, display logon screen"
+
+
+STEP 6 — FIX VPS LOCKSCREEN (if VPS randomly locks despite above settings)
+---------------------------------------------------------------------------
+Run these in admin CMD (all as single lines, copy/paste each one fully):
+
+  reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v InactivityTimeoutSecs /t REG_DWORD /d 0 /f
+  reg add "HKCU\Control Panel\Desktop" /v ScreenSaveActive /t REG_SZ /d 0 /f
+  reg add "HKCU\Control Panel\Desktop" /v ScreenSaverIsSecure /t REG_SZ /d 0 /f
+  reg add "HKCU\Control Panel\Desktop" /v ScreenSaveTimeOut /t REG_SZ /d 0 /f
+
+Then reboot.
+
+
+STEP 7 — APPLY & REBOOT
+-------------------------
+Run in admin CMD:
+  gpupdate /force
+
+Then reboot the VPS.
+
+
+STEP 7 — VERIFY
+-----------------
+Check GP applied:
+  gpresult /r
+
+Check registry keys:
+  reg query "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v KeepAliveEnable
+  reg query "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v KeepAliveInterval
+
+Real-world test: disconnect RDP, wait a few minutes, reconnect. Should resume without lockout or password prompt.
+
+
+NOTES
+------
+- The VPS stays running 24/7 regardless — it's a server, it doesn't sleep.
+- If your laptop sleeps/dies, the VPS keeps running. Reconnect from any device to resume.
+- To prevent RDP disconnect when closing laptop lid:
+    Control Panel > Power Options > Choose what closing the lid does
+    Set to "Do nothing" on both battery and plugged in.
+- RDP client (mstsc): under Experience tab, check "Reconnect if the connection is dropped."

@@ -94,9 +94,12 @@ async function main() {
     entries.push({ product, pricing, sentiment });
   }
 
-  // Post all products in a single Discord message
-  await postWebhook(buildWeeklyReportEmbed(entries));
-  console.log('[weekly-report] Done — posted', entries.length, 'products in one message.');
+  // Post tier1 and tier2 as separate messages to stay under Discord's 6000-char embed limit
+  const payload = buildWeeklyReportEmbed(entries);
+  for (const embed of payload.embeds) {
+    await postWebhook({ embeds: [embed] });
+  }
+  console.log('[weekly-report] Done — posted', entries.length, 'products across', payload.embeds.length, 'messages.');
 }
 
 main().catch(err => {

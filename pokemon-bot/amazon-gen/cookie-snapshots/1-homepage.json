@@ -1,0 +1,194 @@
+[
+  {
+    "name": "aws-waf-token",
+    "value": "1ad0583a-47b2-4e90-9712-500f3c532cb9:EwoAoi2PU/15AAAA:dXsx6pr3eF2L0YxwwM8gqOGQpjNwOmKKNS60+XH2UD61GycPDAEWghEyNU9AzywqYZ4/cREsuUPz34KzmyvoN9UH10YtBW2Q80hkE5SzS/ZAABRDekGvAVMVvRC2T3u3wTzVkk1ttdODjiAfryp0So+1h15/LTc5JSAuKfu9/hQHBss/kod/aZBIIO1LsN8C7SXUzHKu5yJHVPLAot+YyZKP8vcN4YKAcW5O",
+    "domain": ".www.amazon.com",
+    "path": "/",
+    "expires": 1776285176,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "session-id",
+    "value": "139-9218343-5278359",
+    "domain": ".amazon.com",
+    "path": "/",
+    "expires": 1807475576.264098,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "session-id-time",
+    "value": "2082787201l",
+    "domain": ".amazon.com",
+    "path": "/",
+    "expires": 1807475576.264312,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "i18n-prefs",
+    "value": "USD",
+    "domain": ".amazon.com",
+    "path": "/",
+    "expires": 1807475576.264375,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "lc-main",
+    "value": "en_US",
+    "domain": ".amazon.com",
+    "path": "/",
+    "expires": 1807475576.264469,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "skin",
+    "value": "noskin",
+    "domain": ".amazon.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "csm-hit",
+    "value": "tb:s-HHPN70DJG2SYMAHGA89K|1775939576505&t:1775939577443&adb:adblk_no",
+    "domain": "www.amazon.com",
+    "path": "/",
+    "expires": 1806179577,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "ubid-main",
+    "value": "130-3594687-9675818",
+    "domain": ".amazon.com",
+    "path": "/",
+    "expires": 1807475577.563692,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "ad-id",
+    "value": "A5Aj4Cr2MUERsXi0BbjU7RQ",
+    "domain": ".amazon-adsystem.com",
+    "path": "/",
+    "expires": 1798835578.593352,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "ad-privacy",
+    "value": "0",
+    "domain": ".amazon-adsystem.com",
+    "path": "/",
+    "expires": 1810499578.593578,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "XANDR_PANID",
+    "value": "cA6-B3MYs4qlDeg967XyjjxZ2DkXN6No9Paon4zS8nfRPPkM9CIZjmzrc9auFt54HYZFJZ-P-vTALEeD6aGq4aaozGe30lUHcJjWE7p6Etc.",
+    "domain": ".adnxs.com",
+    "path": "/",
+    "expires": 1783715578.862248,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None",
+    "partitionKey": "https://amazon.com",
+    "_crHasCrossSiteAncestor": true
+  },
+  {
+    "name": "uuid2",
+    "value": "5375212211969372675",
+    "domain": ".adnxs.com",
+    "path": "/",
+    "expires": 1783715578.862504,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "anj",
+    "value": "dTM7k!M4/YF7/.XF']wIg2Ilfx7._r!]tbPl1M]o$IyEVU[WtXK_D$-L!r><DFx-B:)QdH>9(yzcxHsbhIXvu#BI7y)N[UD!!-'z*+r8V",
+    "domain": ".adnxs.com",
+    "path": "/",
+    "expires": 1783715578.862456,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "CMID",
+    "value": "adqv.dHM4VYAOJu9ANkvlgAA",
+    "domain": ".casalemedia.com",
+    "path": "/",
+    "expires": 1807475578.892858,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "CMPS",
+    "value": "2404",
+    "domain": ".casalemedia.com",
+    "path": "/",
+    "expires": 1783715578.89297,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "CMPRO",
+    "value": "2404",
+    "domain": ".casalemedia.com",
+    "path": "/",
+    "expires": 1783715578.893023,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "pid",
+    "value": "7017864025776148714",
+    "domain": ".smartadserver.com",
+    "path": "/",
+    "expires": 1783715578.894285,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "TestIfCookieP",
+    "value": "ok",
+    "domain": ".smartadserver.com",
+    "path": "/",
+    "expires": 1809894778.894349,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "csync",
+    "value": "144:sdCalO3iSg6YQFw86ESEmg",
+    "domain": ".smartadserver.com",
+    "path": "/",
+    "expires": 1778531578.894381,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  }
+]

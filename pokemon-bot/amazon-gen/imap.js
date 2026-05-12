@@ -18,7 +18,7 @@ function waitForOtp(toAddress, timeoutMs = 120000) {
       host: config.imap.host,
       port: 993,
       tls: true,
-      tlsOptions: { rejectUnauthorized: true },
+      tlsOptions: { rejectUnauthorized: false },
     });
 
     function poll() {

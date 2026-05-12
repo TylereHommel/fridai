@@ -1,5 +1,27 @@
+# Dependencies
 node_modules/
+
+# Chrome profiles (binary session data)
+pokemon-bot/chrome-profile-bestbuy/
+
+# Tooling artifacts
+.playwright-mcp/
+.superpowers/
+
+# Env / secrets
 .env
-.firecrawl/
-*.log
-amazon-gen/config.js
+*.env
+
+# Python
+__pycache__/
+*.pyc
+trading/venv/
+trading/.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Expo
+.expo/
+dist/

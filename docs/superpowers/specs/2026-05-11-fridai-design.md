@@ -1,4 +1,4 @@
-# PantryAI — Design Spec
+# Fridai — Design Spec
 **Date:** 2026-05-11  
 **Status:** Approved for implementation planning
 
@@ -6,11 +6,11 @@
 
 ## 1. Overview
 
-PantryAI is a cross-platform mobile app (iOS first, Android ready) that lets users photograph their fridge and cabinet contents, receive AI-generated detailed recipes from what they have, track pantry inventory with smart expiry alerts, plan weekly meals, and generate grocery lists — all in one app.
+Fridai is a cross-platform mobile app (iOS first, Android ready) that lets users photograph their fridge and cabinet contents, receive AI-generated detailed recipes from what they have, track pantry inventory with smart expiry alerts, plan weekly meals, and generate grocery lists — all in one app.
 
 ### Market Position
 
-| Feature | Supercook | Yummly | Mealime | Fridgely | BigOven | ChefGPT | **PantryAI** |
+| Feature | Supercook | Yummly | Mealime | Fridgely | BigOven | ChefGPT | **Fridai** |
 |---|---|---|---|---|---|---|---|
 | Multi-photo AI fridge scan | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
 | Pantry + expiry tracking | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ |
@@ -304,11 +304,11 @@ Accessible via a sort icon (top-right of each section). Options per section:
 
 ## 9. Video Recipe Import (Share Extension)
 
-Users can share any recipe video from TikTok, Instagram Reels, YouTube Shorts, or any website directly to PantryAI via the native iOS share sheet.
+Users can share any recipe video from TikTok, Instagram Reels, YouTube Shorts, or any website directly to Fridai via the native iOS share sheet.
 
 ### How It Works
 
-**iOS Share Extension** registered with the app. When user taps Share in TikTok (or any app) and selects PantryAI:
+**iOS Share Extension** registered with the app. When user taps Share in TikTok (or any app) and selects Fridai:
 
 1. **URL received** — extension captures the shared URL
 2. **Metadata fetch (Cloud Function)** — backend fetches the video/page metadata: title, description, caption, and any structured text content via oEmbed or HTML scrape
@@ -447,8 +447,8 @@ Tap "Share" on any recipe detail screen.
 ## 15. Monetization
 
 **Products (RevenueCat):**
-- `pantryai_monthly` — $3.99/month
-- `pantryai_annual` — $29.99/year (37% savings, shown prominently)
+- `fridai_monthly` — $3.99/month
+- `fridai_annual` — $29.99/year (37% savings, shown prominently)
 - Entitlement: `pro` — unlimited scan sessions
 
 **Free tier:** 15 scan sessions per rolling 30-day billing cycle.

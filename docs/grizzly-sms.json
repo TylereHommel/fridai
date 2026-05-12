@@ -1,0 +1,84 @@
+{
+  "name": "Grizzly SMS",
+  "description": "Grizzly SMS temporary number provider",
+  "version": "1.0.0",
+  "priceFormat": "USD",
+  "credentials": [
+    {
+      "name": "apiKey",
+      "label": "API Key",
+      "description": "Your Grizzly SMS API key from the dashboard",
+      "required": true
+    }
+  ],
+  "generalApi": {
+    "getBalance": {
+      "method": "GET",
+      "url": "https://api.grizzlysms.com/stubs/handler_api.php?api_key=${credentials.apiKey}&action=getBalance",
+      "responseType": "TEXT",
+      "responseMapping": {
+        "balance": "^ACCESS_BALANCE:"
+      }
+    }
+  },
+  "tempApi": {
+    "userDataFields": [
+      {
+        "name": "service",
+        "label": "Service Code",
+        "description": "Service code from Grizzly dashboard (e.g. wr for Walmart)",
+        "required": true
+      },
+      {
+        "name": "country",
+        "label": "Country Code",
+        "description": "187 = USA",
+        "required": true,
+        "defaultValue": "187"
+      }
+    ],
+    "userDataConfigs": [
+      {
+        "name": "US Walmart",
+        "values": {
+          "service": "wr",
+          "country": "187"
+        }
+      },
+      {
+        "name": "US Amazon",
+        "values": {
+          "service": "am",
+          "country": "187"
+        }
+      }
+    ],
+    "getPhoneNumber": {
+      "method": "GET",
+      "url": "https://api.grizzlysms.com/stubs/handler_api.php?api_key=${credentials.apiKey}&action=getNumberV2&service=${userData.service}&country=${userData.country}",
+      "responseType": "JSON",
+      "responseMapping": {
+        "phoneNumber": "$.phoneNumber",
+        "orderId": "$.activationId"
+      }
+    },
+    "getMessage": {
+      "method": "GET",
+      "url": "https://api.grizzlysms.com/stubs/handler_api.php?api_key=${credentials.apiKey}&action=getStatusV2&id=${session.orderId}",
+      "responseType": "JSON",
+      "responseMapping": {
+        "message": "$.sms.code"
+      },
+      "pendingCheck": {
+        "type": "FIELD_ABSENT",
+        "path": "$.sms"
+      },
+      "pollingIntervalSeconds": 5
+    },
+    "cancelPhoneNumber": {
+      "method": "GET",
+      "url": "https://api.grizzlysms.com/stubs/handler_api.php?api_key=${credentials.apiKey}&action=setStatus&id=${session.orderId}&status=-1",
+      "responseType": "TEXT"
+    }
+  }
+}

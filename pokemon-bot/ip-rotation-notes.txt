@@ -1,0 +1,37 @@
+IP ROTATION & CONNECTIVITY NOTES
+==================================
+
+HOTSPOT IP ROTATION (for logins & account generation)
+------------------------------------------------------
+PRIMARY METHOD: Airplane Mode (fastest — refreshes IP almost instantly)
+- Toggle airplane mode ON, wait 2-3 seconds, toggle back OFF
+- Forces full carrier re-registration and immediately assigns a new public IP
+- Works on all major US carriers (T-Mobile, Verizon, AT&T, etc.)
+- Use this method for: logins, account creation, any action tied to IP identity
+
+ALTERNATE METHOD: Toggle hotspot off/on
+- Turn hotspot OFF, wait 2-3 seconds, turn back ON
+- Slower and less reliable than airplane mode
+
+TASK EXECUTION CONNECTIVITY
+----------------------------
+- Regular tasks: run on home ISP (normal internet connection)
+- High-risk / flagged tasks: run on Residential proxies
+- Do NOT use hotspot for bulk task execution — save it for identity-sensitive actions
+
+TROUBLESHOOTING — STILL SEEING SHADOWBAN AFTER ROTATION
+---------------------------------------------------------
+If airplane mode rotation doesn't clear it:
+1. On laptop: forget the hotspot network (Wi-Fi settings → forget)
+2. Toggle airplane mode ON on phone, wait 30-60 seconds, toggle OFF
+3. Reconnect laptop to hotspot manually
+This forces a clean DHCP re-lease on top of the carrier IP refresh.
+
+NOTE: ipconfig /release + /renew does NOT work for hotspot on Windows —
+hotspot uses IPv6 + 172.20.10.x (Apple subnet), which ipconfig can't release.
+
+WORKFLOW SUMMARY
+----------------
+1. Account gen / login  →  hotspot (toggle off/on to rotate IP each time)
+2. Routine task runs    →  home ISP
+3. Risky task runs      →  Residential proxy

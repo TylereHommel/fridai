@@ -4,7 +4,7 @@ module.exports = {
   imap: {
     host: 'imap.gmail.com',
     user: 'myfundedtraders1@gmail.com',
-    pass: '', // Gmail app password — fill in before running
+    pass: 'rwdg anrv xhkk ugfm',
   },
   smsPoolKey: 'I0uwP0pNaTdye8b2Qp7pKr5LcKjpmlf8',
   domains: [

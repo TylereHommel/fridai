@@ -17,6 +17,8 @@
   "dependencies": {
     "imap": "^0.8.19",
     "mailparser": "^3.9.8",
-    "playwright": "^1.59.1"
+    "playwright": "^1.59.1",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   }
 }
