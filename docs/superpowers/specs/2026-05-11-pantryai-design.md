@@ -67,7 +67,7 @@ PantryAI is a cross-platform mobile app (iOS first, Android ready) that lets use
 
 ### Main App (5 tabs)
 1. **Scanner** — multi-photo capture, session quota, recent sessions
-2. **Recipes** — last session results + saved + trending community recipes
+2. **Recipes** — last session results + saved + trending, with filter/sort bar and video import
 3. **Pantry** — tracked items, expiry color coding, barcode add, manual add
 4. **Planner** — weekly meal calendar, combined grocery list
 5. **Profile** — account, subscription, dietary prefs, appearance settings
@@ -242,7 +242,67 @@ Each recipe displays:
 
 ---
 
-## 7. "Cooked It" Flow
+## 7. Recipes Tab — Filter, Sort & Layout
+
+### Filter Bar
+Persistent chip bar at the top of the Recipes tab. Filters apply across all three sections (Last Session, Saved, Trending).
+
+**Cuisine filters (horizontal scroll):**
+All · Italian · Asian · Mexican · Mediterranean · American · Indian · Middle Eastern · Japanese
+
+**Dietary filters (horizontal scroll, second row):**
+All · Vegetarian · Vegan · Gluten-Free · Dairy-Free · Keto · Low-Carb · Halal · Kosher
+
+Multiple filters can be active simultaneously. Active chips highlighted in accent color.
+
+### Sort Options
+Accessible via a sort icon (top-right of each section). Options per section:
+
+| Section | Sort options |
+|---|---|
+| Last Session | Best Match (default) · Quickest · Highest Rated |
+| Saved Recipes | Recently Saved (default) · Highest Rated · Quickest · Cuisine · Alphabetical |
+| Trending | Most Popular (default) · Highest Rated · Quickest |
+
+### Section Layout
+1. **From Last Session** — recipe cards with match bar + macro pills. Shown only after a scan session.
+2. **Saved Recipes** — persisted collection. Searchable via search bar at top. Grouped by cuisine tag if cuisine filter active.
+3. **Trending This Week** — top recipes from `recipeArchive` by activity, filtered to match user's dietary restrictions automatically.
+
+---
+
+## 8. Video Recipe Import (Share Extension)
+
+Users can share any recipe video from TikTok, Instagram Reels, YouTube Shorts, or any website directly to PantryAI via the native iOS share sheet.
+
+### How It Works
+
+**iOS Share Extension** registered with the app. When user taps Share in TikTok (or any app) and selects PantryAI:
+
+1. **URL received** — extension captures the shared URL
+2. **Metadata fetch (Cloud Function)** — backend fetches the video/page metadata: title, description, caption, and any structured text content via oEmbed or HTML scrape
+3. **Claude extraction** — metadata sent to Claude with prompt: *"Extract any recipe from this content. Return structured JSON with title, ingredients + amounts, steps, estimated macros, prep time, cook time, servings, and dietary tags. If information is missing or unclear, mark those fields as null."*
+4. **Recipe preview screen** — user sees the extracted recipe with editable fields. Any `null` fields highlighted in amber — user fills gaps manually before saving.
+5. **Save** — writes to `savedRecipes` and `recipeArchive`. Flagged with `source: 'import'` and `sourceUrl` for reference.
+
+### Data Model Addition (savedRecipes)
+```
+source: 'generated' | 'import'   // origin of recipe
+sourceUrl: string | null          // original video/page URL if imported
+```
+
+### Limitations & Handling
+- **Caption-only recipes** (no full ingredient list in description) — Claude extracts what it can, remaining fields are null and user fills in manually
+- **Fully spoken recipes with no text** — Claude receives only the title/caption. Preview screen opens mostly blank. User prompted: *"We couldn't extract full recipe details from this video. Fill in what you know and save."*
+- **Non-recipe content** — Claude returns no recipe data → user shown: *"No recipe found in this content."* with option to enter manually
+- **Platform support** — any URL shared via the iOS share sheet. TikTok, Instagram, YouTube, recipe websites all supported identically
+
+### Implementation Note
+iOS Share Extensions in Expo managed workflow require a custom native config plugin (`expo-share-extension` or equivalent). This is a known complexity — flagged for implementation planning. The extension runs as a lightweight process that hands off to the main app for the preview/save screen.
+
+---
+
+## 9. "Cooked It" Flow
 
 1. User taps "Mark as Cooked"
 2. Confirmation screen shows ingredient deductions with quantities. User can adjust amounts before confirming.
