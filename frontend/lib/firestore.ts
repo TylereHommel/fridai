@@ -18,6 +18,7 @@ export type UserDoc = {
   themeColor: string;
   darkMode: boolean;
   createdAt: Date | null;
+  expoPushToken?: string;
 };
 
 export async function createUserDoc(

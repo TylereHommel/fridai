@@ -60,10 +60,16 @@
           "color": "#38a169",
           "defaultChannel": "default"
         }
-      ]
+      ],
+      "react-native-purchases"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": ""
+      }
     }
   }
 }

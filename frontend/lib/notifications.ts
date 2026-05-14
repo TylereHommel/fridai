@@ -1,5 +1,7 @@
 import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 import { Platform } from 'react-native';
+import { updateUserDoc } from './firestore';
 
 export async function requestNotificationPermission(): Promise<boolean> {
   if (Platform.OS === 'web') return false;
@@ -56,6 +58,20 @@ export async function scheduleExpiryNotifications(
 
 export async function cancelNotifications(ids: string[]): Promise<void> {
   await Promise.all(ids.map((id) => Notifications.cancelScheduledNotificationAsync(id)));
+}
+
+export async function registerPushToken(uid: string): Promise<void> {
+  if (Platform.OS === 'web') return;
+  const { status } = await Notifications.getPermissionsAsync();
+  if (status !== 'granted') return;
+  const projectId = Constants.expoConfig?.extra?.eas?.projectId as string | undefined;
+  if (!projectId) return;
+  try {
+    const token = await Notifications.getExpoPushTokenAsync({ projectId });
+    await updateUserDoc(uid, { expoPushToken: token.data });
+  } catch {
+    // Not available in Expo Go without EAS project — silently skip
+  }
 }
 
 export function configureNotificationHandler() {

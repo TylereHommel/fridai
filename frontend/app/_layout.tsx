@@ -5,7 +5,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider, useAuthContext } from '../contexts/AuthContext';
 import { ThemeProvider, useThemeContext } from '../contexts/ThemeContext';
-import { configureNotificationHandler } from '../lib/notifications';
+import { configureNotificationHandler, registerPushToken } from '../lib/notifications';
+import { initializePurchases } from '../lib/purchases';
 
 function AuthGate() {
   const { user, loading } = useAuthContext();
@@ -25,6 +26,17 @@ function AuthGate() {
   return null;
 }
 
+function PushRegistrar() {
+  const { user } = useAuthContext();
+
+  useEffect(() => {
+    if (!user) return;
+    registerPushToken(user.uid).catch(() => {});
+  }, [user?.uid]);
+
+  return null;
+}
+
 function ThemedStatusBar() {
   const { darkMode } = useThemeContext();
   return <StatusBar style={darkMode ? 'light' : 'dark'} />;
@@ -33,6 +45,7 @@ function ThemedStatusBar() {
 export default function RootLayout() {
   useEffect(() => {
     configureNotificationHandler();
+    initializePurchases();
   }, []);
 
   return (
@@ -41,6 +54,7 @@ export default function RootLayout() {
         <ThemeProvider>
           <ThemedStatusBar />
           <AuthGate />
+          <PushRegistrar />
           <Stack screenOptions={{ headerShown: false }} />
         </ThemeProvider>
       </AuthProvider>

@@ -1,0 +1,20 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "recipeArchive",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "ingredientKeys", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "averageRating", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pantry",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "expiryDate", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

@@ -12,6 +12,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { getUserDoc, updateUserDoc } from '../../lib/firestore';
 import { getQuota } from '../../lib/cloudFunctions';
 import { ThemeName } from '../../constants/colors';
+import { purchasePro, restorePurchases } from '../../lib/purchases';
 
 const DIETARY_OPTIONS = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Halal', 'Kosher', 'Nut Allergy', 'Low-Sodium'];
 const CUISINE_OPTIONS = ['Italian', 'Asian', 'Mexican', 'Mediterranean', 'American', 'Indian', 'Middle Eastern', 'Japanese'];
@@ -27,6 +28,7 @@ export default function ProfileScreen() {
   const [quota, setQuota] = useState<QuotaInfo | null>(null);
   const [saving, setSaving] = useState(false);
   const [loadingPrefs, setLoadingPrefs] = useState(true);
+  const [purchasing, setPurchasing] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -66,6 +68,36 @@ export default function ProfileScreen() {
       Alert.alert('Saved', 'Preferences updated.');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleUpgrade() {
+    setPurchasing(true);
+    try {
+      const success = await purchasePro();
+      if (success) {
+        Alert.alert('Welcome to Pro!', 'Unlimited recipe sessions unlocked.');
+        await loadData();
+      }
+    } catch (e: any) {
+      Alert.alert('Purchase failed', e.message ?? 'Please try again.');
+    } finally {
+      setPurchasing(false);
+    }
+  }
+
+  async function handleRestore() {
+    setPurchasing(true);
+    try {
+      const restored = await restorePurchases();
+      if (restored) {
+        Alert.alert('Restored!', 'Your Pro subscription has been restored.');
+        await loadData();
+      } else {
+        Alert.alert('Nothing to restore', 'No active Pro subscription found.');
+      }
+    } finally {
+      setPurchasing(false);
     }
   }
 
@@ -124,7 +156,21 @@ export default function ProfileScreen() {
                 </View>
               )}
               {quota.subscriptionTier === 'free' && (
-                <Button label="Upgrade to Pro — $3.99/mo" onPress={() => Alert.alert('Coming soon', 'In-app purchase powered by RevenueCat.')} style={{ marginTop: 8 }} />
+                <>
+                  <Button
+                    label={purchasing ? 'Processing…' : 'Upgrade to Pro — $3.99/mo'}
+                    onPress={handleUpgrade}
+                    loading={purchasing}
+                    style={{ marginTop: 8 }}
+                  />
+                  <Button
+                    label="Restore Purchase"
+                    variant="ghost"
+                    onPress={handleRestore}
+                    loading={purchasing}
+                    style={{ marginTop: 4 }}
+                  />
+                </>
               )}
             </View>
           </>

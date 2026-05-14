@@ -37,7 +37,6 @@ exports.dailyExpiryNotifications = void 0;
 const admin = __importStar(require("firebase-admin"));
 const scheduler_1 = require("firebase-functions/v2/scheduler");
 const db = admin.firestore();
-const messaging = admin.messaging();
 exports.dailyExpiryNotifications = (0, scheduler_1.onSchedule)('0 8 * * *', async () => {
     const now = admin.firestore.Timestamp.now();
     const twoDaysLater = admin.firestore.Timestamp.fromMillis(now.toMillis() + 2 * 24 * 60 * 60 * 1000);
@@ -63,16 +62,22 @@ exports.dailyExpiryNotifications = (0, scheduler_1.onSchedule)('0 8 * * *', asyn
 });
 async function notifyUser(uid, itemNames) {
     const userSnap = await db.doc(`users/${uid}`).get();
-    const fcmToken = userSnap.data()?.fcmToken;
-    if (!fcmToken)
+    const expoPushToken = userSnap.data()?.expoPushToken;
+    if (!expoPushToken)
         return;
     const body = itemNames.length === 1
         ? `${itemNames[0]} expires within 2 days — use it up!`
         : `${itemNames.length} pantry items expire within 2 days.`;
-    await messaging.send({
-        token: fcmToken,
-        notification: { title: '🛒 Pantry expiry reminder', body },
-        data: { type: 'expiry_reminder' },
+    await fetch('https://exp.host/--/api/v2/push/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+            to: expoPushToken,
+            title: '🛒 Pantry expiry reminder',
+            body,
+            data: { type: 'expiry_reminder' },
+            sound: 'default',
+        }),
     });
 }
 //# sourceMappingURL=expiryNotifications.js.map

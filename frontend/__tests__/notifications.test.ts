@@ -11,6 +11,14 @@ jest.mock('react-native', () => ({
   Platform: { OS: 'ios' },
 }));
 
+jest.mock('expo-constants', () => ({
+  default: { expoConfig: { extra: { eas: { projectId: 'test-project-id' } } } },
+}));
+
+jest.mock('../lib/firestore', () => ({
+  updateUserDoc: jest.fn().mockResolvedValue(undefined),
+}));
+
 import {
   requestNotificationPermission,
   scheduleExpiryNotifications,
