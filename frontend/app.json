@@ -20,7 +20,8 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Fridai uses the camera to scan your fridge and pantry items.",
         "NSPhotoLibraryUsageDescription": "Fridai accesses your photos to scan fridge and pantry items.",
-        "NSUserNotificationsUsageDescription": "Fridai sends expiry reminders for your pantry items."
+        "NSUserNotificationsUsageDescription": "Fridai sends expiry reminders for your pantry items.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -35,7 +36,8 @@
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.VIBRATE",
-        "android.permission.POST_NOTIFICATIONS"
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "web": {
@@ -60,16 +62,17 @@
           "color": "#38a169",
           "defaultChannel": "default"
         }
-      ],
-      "react-native-purchases"
+      ]
     ],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
       "eas": {
-        "projectId": ""
-      }
-    }
+        "projectId": "d3a5ed2f-b4bf-4e37-b918-b2a3f7f9b51b"
+      },
+      "router": {}
+    },
+    "owner": "tylereho"
   }
 }
