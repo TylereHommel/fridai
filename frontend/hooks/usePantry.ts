@@ -3,6 +3,7 @@ import {
   PantryItem, PantryCategory, subscribeToPantry,
   addPantryItem, updatePantryItem, deletePantryItem, getExpiryStatus,
 } from '../lib/pantry';
+import { scheduleExpiryNotifications, cancelNotifications } from '../lib/notifications';
 import { useAuth } from './useAuth';
 
 export type PantryGroups = Record<PantryCategory, PantryItem[]>;
@@ -42,7 +43,13 @@ export function usePantry() {
 
   async function add(item: Omit<PantryItem, 'id' | 'addedAt' | 'lastUpdatedAt' | 'notificationIds'>) {
     if (!user) return;
-    await addPantryItem(user.uid, item);
+    const itemId = await addPantryItem(user.uid, item);
+    if (item.expiryDate) {
+      const ids = await scheduleExpiryNotifications(item.name, item.expiryDate.toDate());
+      if (ids.length > 0) {
+        await updatePantryItem(user.uid, itemId, { notificationIds: ids });
+      }
+    }
   }
 
   async function update(itemId: string, partial: Partial<Omit<PantryItem, 'id' | 'addedAt'>>) {
@@ -52,6 +59,10 @@ export function usePantry() {
 
   async function remove(itemId: string) {
     if (!user) return;
+    const item = items.find((i) => i.id === itemId);
+    if (item?.notificationIds?.length) {
+      await cancelNotifications(item.notificationIds);
+    }
     await deletePantryItem(user.uid, itemId);
   }
 

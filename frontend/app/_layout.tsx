@@ -5,6 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider, useAuthContext } from '../contexts/AuthContext';
 import { ThemeProvider, useThemeContext } from '../contexts/ThemeContext';
+import { configureNotificationHandler } from '../lib/notifications';
 
 function AuthGate() {
   const { user, loading } = useAuthContext();
@@ -30,6 +31,10 @@ function ThemedStatusBar() {
 }
 
 export default function RootLayout() {
+  useEffect(() => {
+    configureNotificationHandler();
+  }, []);
+
   return (
     <SafeAreaProvider>
       <AuthProvider>
