@@ -49,6 +49,12 @@
       "expo-router",
       "expo-apple-authentication",
       [
+        "expo-camera",
+        {
+          "cameraPermission": "Fridai uses the camera to scan your fridge, pantry items, and barcodes."
+        }
+      ],
+      [
         "expo-image-picker",
         {
           "photosPermission": "Fridai accesses your photos to scan fridge and pantry items.",

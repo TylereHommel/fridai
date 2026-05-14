@@ -205,7 +205,6 @@ export function AddItemSheet({ visible, onClose, onSave, initial }: Props) {
         </ScrollView>
       )}
 
-      {/* Barcode scanner modal — uses expo-barcode-scanner */}
       <BarcodeScannerModal
         visible={showScanner}
         onClose={() => setShowScanner(false)}
@@ -226,22 +225,23 @@ function BarcodeScannerModal({
 }) {
   const [scanned, setScanned] = useState(false);
 
-  function handleScan({ data }: BarcodeScanResult) {
-    if (scanned) return;
-    setScanned(true);
-    onScanned(data);
-  }
-
   if (!visible) return null;
 
   let ScannerView: React.ReactNode = null;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { BarCodeScanner } = require('expo-barcode-scanner');
+    const { CameraView } = require('expo-camera');
     ScannerView = (
-      <BarCodeScanner
-        onBarCodeScanned={handleScan}
+      <CameraView
         style={StyleSheet.absoluteFillObject}
+        facing="back"
+        onBarcodeScanned={({ data }: { data: string }) => {
+          if (scanned) return;
+          setScanned(true);
+          onScanned(data);
+        }}
+        barcodeScannerSettings={{
+          barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'code39', 'qr'],
+        }}
       />
     );
   } catch {
