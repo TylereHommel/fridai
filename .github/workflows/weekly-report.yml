@@ -1,8 +1,6 @@
 name: Weekly Report
 
 on:
-  schedule:
-    - cron: '0 17 * * 0'      # Sundays at 17:00 UTC (9am PST)
   workflow_dispatch:
 
 permissions:

@@ -1,8 +1,6 @@
 name: Daily Digest
 
 on:
-  schedule:
-    - cron: '0 14 * * *'      # daily at 14:00 UTC (6am PST)
   workflow_dispatch:
 
 permissions:

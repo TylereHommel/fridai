@@ -1,8 +1,6 @@
 name: Price Monitor
 
 on:
-  schedule:
-    - cron: '30 14 * * *'    # daily at 14:30 UTC (6:30am PST), 30min after digest
   workflow_dispatch:
 
 permissions:
